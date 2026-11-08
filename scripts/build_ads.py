@@ -65,6 +65,70 @@ ADS = {
 
 COVER = f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},setsar=1"
 
+# --- Captions -------------------------------------------------------------
+# Word timings come from ElevenLabs Scribe (scripts/captions/<ad>.json).
+FONT_DIR = "/usr/share/fonts/truetype/noto"   # apt: fonts-noto-core
+FONT = "Noto Kufi Arabic"
+FIXES = {"كاميرة": "كاميرا", "bass": "بيس"}  # transcription slips -> script spelling
+MAX_WORDS = 3          # words on screen at once
+HIGHLIGHT = "&H0033D6FF&"  # current word: warm yellow (ASS is BGR)
+
+ASS_HEAD = f"""[Script Info]
+ScriptType: v4.00+
+PlayResX: {W}
+PlayResY: {H}
+WrapStyle: 0
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Cap,{FONT},112,&H00FFFFFF,&H00FFFFFF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,9,4,2,50,50,420,-1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+"""
+
+
+def ts(t):
+    t = max(t, 0)
+    return f"{int(t//3600)}:{int(t%3600//60):02d}:{t%60:05.2f}"
+
+
+def captions(name, offset, total, out):
+    words = [w for w in json.load(open(os.path.join("scripts", "captions", f"{name}.json")))["words"]
+             if w.get("type", "word") == "word"]
+    # Group into short chunks; a sentence end always closes a chunk.
+    chunks, cur = [], []
+    for w in words:
+        cur.append(w)
+        if len(cur) == MAX_WORDS or w["text"].rstrip()[-1:] in ".!؟?،,":
+            chunks.append(cur); cur = []
+    if cur:
+        chunks.append(cur)
+    # Don't leave a single word alone ("6 في" / "1"): fold it into the chunk before.
+    ends = lambda ch: ch[-1]["text"].rstrip()[-1:] in ".!؟?،,"
+    merged = []
+    for ch in chunks:
+        if len(ch) == 1 and merged and not ends(merged[-1]):
+            merged[-1] = merged[-1] + ch
+        else:
+            merged.append(ch)
+    chunks = merged
+    clean = lambda s: FIXES.get(s.strip(".،,!؟?"), s.strip(".،,!؟?"))
+    lines = []
+    for ci, ch in enumerate(chunks):
+        nxt = chunks[ci + 1][0]["start"] if ci + 1 < len(chunks) else total - offset
+        end_chunk = min(nxt, ch[-1]["end"] + 0.6)
+        for wi, w in enumerate(ch):
+            start = ch[0]["start"] if wi == 0 else w["start"]
+            end = ch[wi + 1]["start"] if wi + 1 < len(ch) else end_chunk
+            txt = " ".join((f"{{\\c{HIGHLIGHT}}}{clean(x['text'])}{{\\c&H00FFFFFF&}}" if xi == wi
+                            else clean(x["text"])) for xi, x in enumerate(ch))
+            pop = "{\\fscx108\\fscy108\\t(0,120,\\fscx100\\fscy100)}" if wi == 0 else ""
+            lines.append(f"Dialogue: 0,{ts(start+offset)},{ts(end+offset)},Cap,,0,0,0,,{pop}{txt}\n")
+    with open(out, "w", encoding="utf-8") as f:
+        f.write(ASS_HEAD + "".join(lines))
+
 
 def run(cmd):
     subprocess.run(cmd, check=True)
@@ -104,9 +168,12 @@ def build(name):
         os.makedirs("ads", exist_ok=True)
         out = os.path.join("ads", f"{name}.mp4")
         ms = int(VO_DELAY * 1000)
+        ass = os.path.join(tmp, "captions.ass")
+        captions(name, VO_DELAY, total, ass)
         run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", lst, "-i", vo,
              "-filter_complex",
-             f"[0:v]fade=t=in:st=0:d=0.3,fade=t=out:st={total-0.4:.2f}:d=0.4[v];"
+             f"[0:v]ass={ass}:fontsdir={FONT_DIR},"
+             f"fade=t=in:st=0:d=0.3,fade=t=out:st={total-0.4:.2f}:d=0.4[v];"
              f"[1:a]adelay={ms}|{ms},apad,atrim=0:{total:.2f},afade=t=out:st={total-0.3:.2f}:d=0.3,"
              f"loudnorm=I=-14:TP=-1.5:LRA=11,aresample=48000[a]",
              "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-preset", "slow", "-crf", "21",

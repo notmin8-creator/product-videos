@@ -9,3 +9,6 @@ Baskio product ads with Saudi Arabic voiceovers from ElevenLabs.
 
 The original footage in `source/` is not committed (about 425 MB). To rebuild,
 put the files in `source/` and run `python3 scripts/build_ads.py`.
+
+Captions are burned in from ElevenLabs word timings (`scripts/captions/`), in
+Noto Kufi Arabic (`apt-get install fonts-noto-core`).
