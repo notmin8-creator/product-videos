@@ -67,11 +67,27 @@ COVER = f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},setsar
 
 # --- Captions -------------------------------------------------------------
 # Word timings come from ElevenLabs Scribe (scripts/captions/<ad>.json).
-FONT_DIR = "/usr/share/fonts/truetype/noto"   # apt: fonts-noto-core
-FONT = "Noto Kufi Arabic"
+# Thmanyah Sans Black. Its license forbids redistributing the font file, so it is
+# NOT in this repo: download it from https://font.thmanyah.com and put
+# thmanyah-sans-Black.otf in fonts/ (git-ignored).
+FONT_DIR = "fonts"
+FONT = "thmanyah sans Black"
 FIXES = {"كاميرة": "كاميرا", "bass": "بيس"}  # transcription slips -> script spelling
 MAX_WORDS = 3          # words on screen at once
 HIGHLIGHT = "&H0033D6FF&"  # current word: warm yellow (ASS is BGR)
+
+# Everything sits in the top band, clear of Instagram Reels' UI:
+# top bar (0-220px), caption/username (bottom 420px) and side buttons.
+CAP_TOP = 300          # spoken captions, normally
+CAP_UNDER_HOOK = 590   # spoken captions while the opening hook is on screen
+
+# Opening hook: big label for the first seconds of the ad.
+HOOK_END = 2.6
+HOOKS = {
+    "camera-1-unboxing": "أفضل هدية لطفلك؟",
+    "camera-2-instant-print": "أفضل هدية لطفلك؟",
+    "camera-3-gift-games": "أفضل هدية لطفلك؟",
+}
 
 ASS_HEAD = f"""[Script Info]
 ScriptType: v4.00+
@@ -82,7 +98,8 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Cap,{FONT},112,&H00FFFFFF,&H00FFFFFF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,9,4,2,50,50,420,-1
+Style: Cap,{FONT},96,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,0,0,0,0,100,100,0,0,1,8,4,8,120,120,{CAP_TOP},-1
+Style: Hook,{FONT},140,&H00241A2E,&H00FFFFFF,&H00C9A8FF,&H00C9A8FF,0,0,0,0,100,100,0,0,3,26,0,8,100,100,290,-1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -116,6 +133,9 @@ def captions(name, offset, total, out):
     chunks = merged
     clean = lambda s: FIXES.get(s.strip(".،,!؟?"), s.strip(".،,!؟?"))
     lines = []
+    hook = HOOKS.get(name)
+    if hook:
+        lines.append(f"Dialogue: 1,{ts(0)},{ts(HOOK_END)},Hook,,0,0,0,,{{\\fad(120,200)}}{hook}\n")
     for ci, ch in enumerate(chunks):
         nxt = chunks[ci + 1][0]["start"] if ci + 1 < len(chunks) else total - offset
         end_chunk = min(nxt, ch[-1]["end"] + 0.6)
@@ -125,7 +145,9 @@ def captions(name, offset, total, out):
             txt = " ".join((f"{{\\c{HIGHLIGHT}}}{clean(x['text'])}{{\\c&H00FFFFFF&}}" if xi == wi
                             else clean(x["text"])) for xi, x in enumerate(ch))
             pop = "{\\fscx108\\fscy108\\t(0,120,\\fscx100\\fscy100)}" if wi == 0 else ""
-            lines.append(f"Dialogue: 0,{ts(start+offset)},{ts(end+offset)},Cap,,0,0,0,,{pop}{txt}\n")
+            # Under the hook while it shows; a chunk that starts under it stays there.
+            mv = CAP_UNDER_HOOK if hook and ch[0]["start"] + offset < HOOK_END else 0
+            lines.append(f"Dialogue: 0,{ts(start+offset)},{ts(end+offset)},Cap,,0,0,{mv},,{pop}{txt}\n")
     with open(out, "w", encoding="utf-8") as f:
         f.write(ASS_HEAD + "".join(lines))
 
