@@ -54,7 +54,7 @@ ADS = {
                ("IMG_7943.mp4", 49.0, 2.4),  # print against the view
                ("IMG_5136.mp4", 42.0, 2.9),  # writing in the notebook
                ("IMG_7957.mp4", 10.0, 1.45), # camera + thumbs up ("live the moment")
-               ("IMG_7957.mp4", 3.9, 1.25),  # phone + finger "no" ("away from my phone")
+               ("IMG_7957.mp4", 2.7, 1.25),  # phone held in both hands, wrists covered ("away from my phone")
                ("IMG_5135.mp4", 30.0, 2.0),  # print in the shop
                ("IMG_5136.mp4", 98.0, 2.1),  # the finished page
                ("IMG_7934.mp4", 0.5, 2.8)],  # boxed camera ("worth it, order now")
@@ -92,7 +92,7 @@ ADS = {
                ("IMG_8031.mp4", 18.7, 4.9),   # writing (shortened from 21s)
                ("IMG_8031.mp4", 39.4, 1.3),   # notebook closed
                ("IMG_7957.mp4", 10.0, 1.6),   # camera + thumbs up ("live the moment")
-               ("IMG_7957.mp4", 3.9, 1.6),    # phone + finger "no" ("away from my phone")
+               ("IMG_7957.mp4", 2.4, 1.6),    # phone held in both hands, wrists covered ("away from my phone")
                ("IMG_5136.mp4", 98.0, 2.3),   # the finished page
                ("IMG_7943.mp4", 49.0, 2.4),   # print against the view
                ("IMG_8031.mp4", 52.0, 2.5)],  # boxed camera on the railing
