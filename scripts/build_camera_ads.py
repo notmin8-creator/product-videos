@@ -53,8 +53,8 @@ ADS = {
                ("IMG_7948.mp4", 15.0, 2.4),  # print coming out
                ("IMG_7943.mp4", 49.0, 2.4),  # print against the view
                ("IMG_5136.mp4", 42.0, 2.9),  # writing in the notebook
-               ("hf_thumbs_final.mp4", 1.5, 1.45), # camera + thumbs up ("live the moment")
-               ("hf_phone_final.mp4", 1.3, 1.25),  # phone held in both hands, wrists covered ("away from my phone")
+               ("still_thumbs_sleeve.jpg", 0, 1.45), # camera + thumbs up ("live the moment")
+               ("still_phone_sleeve.jpg", 0, 1.25),  # phone held in both hands, wrists covered ("away from my phone")
                ("IMG_5135.mp4", 30.0, 2.0),  # print in the shop
                ("IMG_5136.mp4", 98.0, 2.1),  # the finished page
                ("IMG_7934.mp4", 0.5, 2.8)],  # boxed camera ("worth it, order now")
@@ -91,8 +91,8 @@ ADS = {
                ("IMG_8031.mp4", 15.1, 3.6),   # notebook
                ("IMG_8031.mp4", 18.7, 4.9),   # writing (shortened from 21s)
                ("IMG_8031.mp4", 39.4, 1.3),   # notebook closed
-               ("hf_thumbs_final.mp4", 1.5, 1.6),   # camera + thumbs up ("live the moment")
-               ("hf_phone_final.mp4", 1.3, 1.6),    # phone held in both hands, wrists covered ("away from my phone")
+               ("still_thumbs_sleeve.jpg", 0, 1.6),   # camera + thumbs up ("live the moment")
+               ("still_phone_sleeve.jpg", 0, 1.6),    # phone held in both hands, wrists covered ("away from my phone")
                ("IMG_5136.mp4", 98.0, 2.3),   # the finished page
                ("IMG_7943.mp4", 49.0, 2.4),   # print against the view
                ("IMG_8031.mp4", 52.0, 2.5)],  # boxed camera on the railing
@@ -209,6 +209,13 @@ FILL = (f"scale=trunc(iw*sar/2)*2:ih,setsar=1,"
 
 
 def shot(src, start, d, out):
+    if src.lower().endswith(".jpg"):
+        n = round(d * FPS)
+        vf = (f"scale={W*2}:{H*2}:force_original_aspect_ratio=increase,crop={W*2}:{H*2},"
+              f"zoompan=z='min(zoom+0.0015,1.08)':x='iw/2-iw/zoom/2':y='ih/2-ih/zoom/2':d={n}:s={W}x{H}:fps={FPS},setsar=1")
+        run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-loop", "1", "-i", f"source/{src}", "-vf", vf,
+             "-frames:v", str(n), "-an", "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-pix_fmt", "yuv420p", out])
+        return
     run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-ss", str(start), "-i", f"source/{src}", "-t", str(d),
          "-vf", f"{FILL},fps={FPS}", "-frames:v", str(round(d * FPS)), "-an",
          "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-pix_fmt", "yuv420p", out])
