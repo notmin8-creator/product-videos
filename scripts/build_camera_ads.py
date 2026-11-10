@@ -108,8 +108,8 @@ ADS = {
 # Video 4 sound design: (file in audio/ad-8031, start s, volume, loop-to-seconds or None)
 V4_LINES = [0.3, 4.2, 7.3, 15.4, 19.6, 24.9, 28.3]   # where each voice line starts (re-cut timeline)
 V4_SFX = [("sfx_pens.mp3", 0.0, 0.45, None), ("sfx_box.mp3", 4.0, 0.45, None),
-          ("sfx_shutter.mp3", 8.6, 0.5, None), ("sfx_printer.mp3", 10.0, 1.0, None),
-          ("sfx_tear.mp3", 13.4, 0.9, None), ("sfx_cap.mp3", 15.3, 0.45, None),
+          ("sfx_shutter.mp3", 8.6, 0.5, None), ("sfx_printer.mp3", 10.0, 2.2, None),
+          ("sfx_tear.mp3", 13.4, 1.8, None), ("sfx_cap.mp3", 15.3, 0.45, None),
           ("sfx_writing.mp3", 19.0, 0.08, 4.6), ("sfx_close.mp3", 24.0, 0.4, None),
           ("sfx_outdoor.mp3", 24.9, 0.2, 10.4)]   # sounds sit under the (levelled) voice
 
