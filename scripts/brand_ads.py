@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Add Baskio branding to finished ads: a small 'baskio' wordmark in the top-left corner the
+"""Add Baskio branding to finished ads: a 'baskio' wordmark pill centred at the top the
 whole time, plus a green rounded 'www.baskiostore.com' badge over the last shot.
 
 Usage (repo root): python3 scripts/brand_ads.py ads/camera/v1-kids.mp4 [...]
@@ -30,8 +30,8 @@ def fit(path, w):
 
 
 def make_assets(tmp):
-    # corner: green "baskio" wordmark on a white rounded pill, clear of Instagram's top bar
-    en = fit("brand/wordmark-en.png", 170)
+    # logo: green "baskio" wordmark on a white rounded pill, centred at the top
+    en = fit("brand/wordmark-en.png", 200)
     pw, ph = en.size[0] + 44, en.size[1] + 30
     pill = Image.new("RGBA", (pw, ph), (0, 0, 0, 0))
     ImageDraw.Draw(pill).rounded_rectangle([0, 0, pw - 1, ph - 1], ph // 2, fill=(255, 255, 255, 235))
@@ -62,7 +62,7 @@ def brand(src):
     with tempfile.TemporaryDirectory() as tmp:
         make_assets(tmp)
         # badge sits in the open area under the captions, clear of the product and Instagram's UI
-        fc = (f"[0:v][1:v]overlay=40:236:format=auto[c];"
+        fc = (f"[0:v][1:v]overlay=(W-w)/2:110:format=auto[c];"
               f"[2:v]format=rgba,fade=t=in:st={st:.2f}:d=0.3:alpha=1[b];"
               f"[c][b]overlay=(W-w)/2:{BADGE_Y.get(name, 820)}:enable='gte(t,{st:.2f})':format=auto,format=yuv420p[v]")
         run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-i", src,

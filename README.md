@@ -16,7 +16,7 @@ license doesn't allow redistributing it, so it is not in this repo: download it 
 https://font.thmanyah.com and put `thmanyah-sans-Black.otf` in `fonts/`.
 
 ## Final branded ads
-`ads/final/` holds the ready-to-post versions: a small "baskio" wordmark in the top-left
-corner throughout, and a green rounded "www.baskiostore.com" badge over the last shot
+`ads/final/` holds the ready-to-post versions: a "baskio" wordmark pill centred at the
+top throughout, and a green rounded "www.baskiostore.com" badge over the last shot
 (last 2.5s). Wordmarks are in `brand/`. Rebuild with
 `python3 scripts/brand_ads.py ads/camera/*.mp4`.
