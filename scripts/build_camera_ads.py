@@ -107,11 +107,11 @@ ADS = {
 
 # Video 4 sound design: (file in audio/ad-8031, start s, volume, loop-to-seconds or None)
 V4_LINES = [0.3, 4.2, 7.3, 15.4, 19.6, 24.9, 28.3]   # where each voice line starts (re-cut timeline)
-V4_SFX = [("sfx_pens.mp3", 0.0, 0.7, None), ("sfx_box.mp3", 4.0, 0.7, None),
-          ("sfx_shutter.mp3", 8.6, 0.8, None), ("sfx_printer.mp3", 10.0, 0.7, None),
-          ("sfx_tear.mp3", 13.4, 0.8, None), ("sfx_cap.mp3", 15.3, 0.7, None),
-          ("sfx_writing.mp3", 19.0, 0.12, 4.6), ("sfx_close.mp3", 24.0, 0.6, None),
-          ("sfx_outdoor.mp3", 24.9, 0.3, 10.4)]
+V4_SFX = [("sfx_pens.mp3", 0.0, 0.45, None), ("sfx_box.mp3", 4.0, 0.45, None),
+          ("sfx_shutter.mp3", 8.6, 0.5, None), ("sfx_printer.mp3", 10.0, 1.0, None),
+          ("sfx_tear.mp3", 13.4, 0.9, None), ("sfx_cap.mp3", 15.3, 0.45, None),
+          ("sfx_writing.mp3", 19.0, 0.08, 4.6), ("sfx_close.mp3", 24.0, 0.4, None),
+          ("sfx_outdoor.mp3", 24.9, 0.2, 10.4)]   # sounds sit under the (levelled) voice
 
 ENDS = ".!؟?…"
 
@@ -247,7 +247,8 @@ def build(name):
             ins, fl = [], []
             for i, off in enumerate(V4_LINES):
                 ins += ["-i", f"audio/ad-8031/vo{i+1}.mp3"]
-                ms = int(off * 1000); fl.append(f"[{i}]adelay={ms}|{ms}[a{i}]")
+                ms = int(off * 1000)
+                fl.append(f"[{i}]loudnorm=I=-16:TP=-1.5:LRA=7,aresample=44100,adelay={ms}|{ms}[a{i}]")
             total = sum(d for *_, d in cfg["shots"])
             run(["ffmpeg", "-nostdin", "-v", "error", "-y", *ins, "-filter_complex",
                  ";".join(fl) + ";" + "".join(f"[a{i}]" for i in range(len(V4_LINES))) +
