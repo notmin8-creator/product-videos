@@ -20,7 +20,7 @@ W, H, FPS = 1080, 1920, 30
 VO_DELAY = 0.25
 FONT_DIR = "fonts"
 AR_FONT, EN_FONT = "thmanyah sans Black", "thmanyah sans"
-HIGHLIGHT = "&H0033D6FF&"
+HIGHLIGHT = "&H0000FFFF&"  # pure yellow #FFFF00 (ASS is BGR; renders ~#FFF000 after encoding)
 MAX_WORDS = 3
 CAP_TOP, EN_GAP = 300, 135          # Arabic line, English line = Arabic + gap
 CAP_UNDER_HOOK = 590
@@ -47,7 +47,7 @@ ADS = {
             "The best gift you can give your child.",
             "Order now!"]),
     "v2-girls": dict(
-        vo="audio/v123/v2-girls.mp3", hook="يا بنات… لازم تشوفون هالكاميرا",
+        vo="audio/v123/v2-girls-full.mp3", hook="يا بنات… لازم تشوفون هالكاميرا",
         shots=[("IMG_7948.mp4", 3.0, 2.4),   # holding the camera at the lake
                ("IMG_5135.mp4", 3.0, 2.2),   # in the shop
                ("IMG_7948.mp4", 15.0, 2.4),  # print coming out
@@ -56,7 +56,8 @@ ADS = {
                ("IMG_7957.mp4", 10.0, 1.45), # camera + thumbs up ("live the moment")
                ("IMG_7957.mp4", 3.9, 1.25),  # phone + finger "no" ("away from my phone")
                ("IMG_5135.mp4", 30.0, 2.0),  # print in the shop
-               ("IMG_5136.mp4", 98.0, 2.1)], # the finished page
+               ("IMG_5136.mp4", 98.0, 2.1),  # the finished page
+               ("IMG_7934.mp4", 0.5, 2.8)],  # boxed camera ("worth it, order now")
         en=["Girls…",
             "I found a cute vintage camera, you have to see it.",
             "Snap a photo…",
@@ -64,7 +65,8 @@ ADS = {
             "I stick it in my notebook and write about my day.",
             "That way I live the moment…",
             "away from my phone.",
-            "Imagine flipping through all these memories a year from now!"]),
+            "Imagine flipping through all these memories a year from now!",
+            "It's worth it…", "Order it now!"]),
     "v3-unboxing": dict(
         vo="audio/v123/v3-unboxing.mp3", hook="وش يجي داخل العلبة؟",
         shots=[("IMG_5125.mp4", 0.0, 3.2),   # the box

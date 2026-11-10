@@ -74,7 +74,7 @@ FONT_DIR = "fonts"
 FONT = "thmanyah sans Black"
 FIXES = {"كاميرة": "كاميرا", "bass": "بيس"}  # transcription slips -> script spelling
 MAX_WORDS = 3          # words on screen at once
-HIGHLIGHT = "&H0033D6FF&"  # current word: warm yellow (ASS is BGR)
+HIGHLIGHT = "&H0000F0FF&"  # bright yellow #FFF000 (ASS is BGR)  # current word: warm yellow (ASS is BGR)
 
 # Everything sits in the top band, clear of Instagram Reels' UI:
 # top bar (0-220px), caption/username (bottom 420px) and side buttons.
