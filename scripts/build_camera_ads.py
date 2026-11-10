@@ -270,7 +270,7 @@ def build(name):
             v4_audio(total, aud)
             captions(name, cfg, 0.0, total, ass)
             run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", lst, "-i", aud,
-                 "-vf", f"ass={ass}:fontsdir={FONT_DIR},fade=t=out:st={total-0.4:.2f}:d=0.4",
+                 "-vf", f"ass={ass}:fontsdir={FONT_DIR}",   # no fade: the ad should loop seamlessly
                  "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-preset", "slow", "-crf", "21",
                  "-pix_fmt", "yuv420p", "-c:a", "copy", "-movflags", "+faststart", "-t", f"{total:.2f}", out])
         else:
@@ -284,7 +284,7 @@ def build(name):
             ms = int(VO_DELAY * 1000)
             run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", lst, "-i", cfg["vo"],
                  "-filter_complex",
-                 f"[0:v]ass={ass}:fontsdir={FONT_DIR},fade=t=in:st=0:d=0.3,fade=t=out:st={total-0.4:.2f}:d=0.4[v];"
+                 f"[0:v]ass={ass}:fontsdir={FONT_DIR}[v];"   # no fades: the ad should loop seamlessly
                  f"[1:a]adelay={ms}|{ms},apad,atrim=0:{total:.2f},afade=t=out:st={total-0.3:.2f}:d=0.3,"
                  f"loudnorm=I=-14:TP=-1.5:LRA=11,aresample=48000[a]",
                  "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-preset", "slow", "-crf", "21",
