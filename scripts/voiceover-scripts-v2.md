@@ -24,12 +24,18 @@ Build: `python3 scripts/build_camera_ads.py` (shot lists live in that file).
 تصوّر وتطبع على طول، زي كاميرات الطباعة الفورية المعروفة…
 بس لأنها تطبع أبيض وأسود بستايل فنتج، سعرها أقل بكثير! اطلبها الحين.
 
-## v4-asmr (Jumana, IMG_8031, music removed, ASMR added)
+## v4-asmr (Jumana, re-cut of IMG_8031 to 35s, music removed, ASMR added)
+Writing part cut from 21s to 5s, palm part dropped (wrist showing), phone/camera flipped:
+camera + thumbs up on "live the moment", phone + "no" on "away from my phone".
 0.3s  صرت أوثّق يومي بطريقة ثانية…
 4.2s  كاميرا فنتج… كيوت مرة!
 7.3s  تصوّرين… والصورة تطلع بيدك على طول، أبيض وأسود!
 15.4s ألصقها بدفتري… وأكتب جنبها عن يومي.
-28.5s كل صفحة… ذكرى أرجع لها بعدين.
-40.9s وكذا أعيش اللحظة… بعيد عن الجوال.
-46.5s تخيلي ترجعين بعد سنة… وتقلّبين كل هالذكريات!
-ASMR: pens, box sleeve, shutter, printer, paper tear, pen cap, marker writing, notebook close, lake ambience.
+19.6s كل صفحة… ذكرى أرجع لها بعدين.
+24.9s وكذا أعيش اللحظة… بعيد عن الجوال.
+28.3s تخيلي ترجعين بعد سنة… وتقلّبين كل هالذكريات!
+ASMR: pens, box sleeve, shutter, printer, paper tear, pen cap, soft marker writing, notebook close, lake ambience.
+
+## Footage rule
+No shot where skin shows past the sleeve, and no men's hands. Excluded: IMG_5054, IMG_7947,
+IMG_7949, IMG_7930, IMG_7939, IMG_8031 46-52s, IMG_5125 around 30s.

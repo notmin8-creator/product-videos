@@ -29,15 +29,15 @@ HOOK_END = 2.6
 # (source, start, duration). Times picked from the footage, see voiceover-scripts-v2.md.
 ADS = {
     "v1-kids": dict(
-        vo="audio/v123/v1-kids.mp3", hook="أفضل هدية لطفلك؟",
+        vo="audio/v123/v1-kids.mp3", hook="أفضل هدية لطفلك؟", hook_end=2.2,
         shots=[("IMG_5121.mp4", 0.5, 2.2),   # box held up
-               ("IMG_7939.mp4", 7.0, 3.0),   # framing the lake on the camera screen
-               ("IMG_5054.mp4", 6.0, 2.0),   # shooting the palms
-               ("IMG_7947.mp4", 22.0, 2.4),  # print comes out
+               ("IMG_7943.mp4", 15.0, 3.0),  # her hands framing the lake on the camera screen
+               ("IMG_7948.mp4", 3.0, 2.0),   # holding the camera up to shoot
+               ("IMG_7948.mp4", 15.0, 2.4),  # print comes out
                ("IMG_5136.mp4", 12.0, 2.2),  # print placed in the notebook
                ("IMG_5136.mp4", 56.0, 3.5),  # writing next to it
                ("IMG_7943.mp4", 49.0, 2.1),  # print held against the view
-               ("IMG_7930.mp4", 5.0, 2.2)],  # boxed camera at the lake
+               ("IMG_7934.mp4", 0.5, 2.2)],  # boxed camera on the railing (no hands)
         en=["Every child loves to discover…",
             "and this camera helps them observe the world around them.",
             "A camera to capture whatever they love…",
@@ -53,8 +53,9 @@ ADS = {
                ("IMG_7948.mp4", 15.0, 2.4),  # print coming out
                ("IMG_7943.mp4", 49.0, 2.4),  # print against the view
                ("IMG_5136.mp4", 42.0, 2.9),  # writing in the notebook
-               ("IMG_7957.mp4", 4.5, 2.7),   # phone swapped for the camera
-               ("IMG_7949.mp4", 6.0, 2.0),   # prints among the palms
+               ("IMG_7957.mp4", 10.0, 1.45), # camera + thumbs up ("live the moment")
+               ("IMG_7957.mp4", 3.9, 1.25),  # phone + finger "no" ("away from my phone")
+               ("IMG_5135.mp4", 30.0, 2.0),  # print in the shop
                ("IMG_5136.mp4", 98.0, 2.1)], # the finished page
         en=["Girls…",
             "I found a cute vintage camera, you have to see it.",
@@ -67,20 +68,32 @@ ADS = {
     "v3-unboxing": dict(
         vo="audio/v123/v3-unboxing.mp3", hook="وش يجي داخل العلبة؟",
         shots=[("IMG_5125.mp4", 0.0, 3.2),   # the box
-               ("IMG_5125.mp4", 30.0, 2.4),  # unpacking paper and cable
+               ("IMG_5125.mp4", 4.0, 2.4),   # camera out of the box
                ("IMG_5125.mp4", 44.0, 2.0),  # everything laid out
                ("IMG_5122.mp4", 16.0, 2.2),  # screen on
-               ("IMG_7947.mp4", 24.0, 2.5),  # print comes out
+               ("IMG_7948.mp4", 17.0, 2.5),  # print comes out
                ("IMG_7943.mp4", 49.0, 3.1),  # print against the view
-               ("IMG_7949.mp4", 8.0, 1.6),   # prints
-               ("IMG_7930.mp4", 5.0, 2.0)],  # boxed camera
+               ("IMG_5135.mp4", 30.0, 1.6),  # print in the shop
+               ("IMG_7934.mp4", 0.5, 2.0)],  # boxed camera on the railing (no hands)
         en=["Here's everything that comes with this cute camera!",
             "The camera, printing paper, a charging cable and coloring pens.",
             "It snaps and prints instantly, like the well-known instant cameras…",
             "but since it prints black & white vintage style, it costs way less!",
             "Order now."]),
     "v4-asmr": dict(
-        video="IMG_8031.mp4", hook=None,
+        mix=True, hook=None,
+        # Re-cut of the user's IMG_8031: writing part shortened, palm part (wrist showing) dropped,
+        # phone/camera flipped to match the line.
+        shots=[("IMG_8031.mp4", 0.0, 7.1),    # pens + box sleeve
+               ("IMG_8031.mp4", 7.1, 8.0),    # camera screen, printing in the shop
+               ("IMG_8031.mp4", 15.1, 3.6),   # notebook
+               ("IMG_8031.mp4", 18.7, 4.9),   # writing (shortened from 21s)
+               ("IMG_8031.mp4", 39.4, 1.3),   # notebook closed
+               ("IMG_7957.mp4", 10.0, 1.6),   # camera + thumbs up ("live the moment")
+               ("IMG_7957.mp4", 3.9, 1.6),    # phone + finger "no" ("away from my phone")
+               ("IMG_5136.mp4", 98.0, 2.3),   # the finished page
+               ("IMG_7943.mp4", 49.0, 2.4),   # print against the view
+               ("IMG_8031.mp4", 52.0, 2.5)],  # boxed camera on the railing
         en=["I've started documenting my day differently…",
             "A vintage camera…", "so cute!",
             "Snap a photo…", "and it prints right in your hand, black and white!",
@@ -91,11 +104,12 @@ ADS = {
 }
 
 # Video 4 sound design: (file in audio/ad-8031, start s, volume, loop-to-seconds or None)
+V4_LINES = [0.3, 4.2, 7.3, 15.4, 19.6, 24.9, 28.3]   # where each voice line starts (re-cut timeline)
 V4_SFX = [("sfx_pens.mp3", 0.0, 0.7, None), ("sfx_box.mp3", 4.0, 0.7, None),
           ("sfx_shutter.mp3", 8.6, 0.8, None), ("sfx_printer.mp3", 10.0, 0.7, None),
           ("sfx_tear.mp3", 13.4, 0.8, None), ("sfx_cap.mp3", 15.3, 0.7, None),
-          ("sfx_writing.mp3", 19.0, 0.35, 21.0), ("sfx_close.mp3", 40.2, 0.7, None),
-          ("sfx_outdoor.mp3", 40.75, 0.45, 14.4), ("sfx_shutter.mp3", 47.0, 0.7, None)]
+          ("sfx_writing.mp3", 19.0, 0.12, 4.6), ("sfx_close.mp3", 24.0, 0.6, None),
+          ("sfx_outdoor.mp3", 24.9, 0.3, 10.4)]
 
 ENDS = ".!؟?…"
 
@@ -134,6 +148,8 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
 
 def captions(name, cfg, offset, total, out):
+    global HOOK_END
+    HOOK_END = cfg.get("hook_end", 2.6)
     words = [w for w in json.load(open(f"scripts/captions/{name}.json"))["words"]
              if not w["text"].startswith("[")]
     # Sentences (for the English line): split on . ! ؟ …
@@ -219,14 +235,32 @@ def build(name):
     out = f"ads/camera/{name}.mp4"
     with tempfile.TemporaryDirectory() as tmp:
         ass = os.path.join(tmp, "c.ass")
-        if name == "v4-asmr":
-            src = f"source/{cfg['video']}"
-            total = dur(src)
+        if cfg.get("mix"):
+            # Voice lines placed on the re-cut timeline; caption timings follow them.
+            words = []
+            for i, off in enumerate(V4_LINES, 1):
+                words += [{**w, "start": w["start"] + off, "end": w["end"] + off}
+                          for w in json.load(open(f"scripts/captions/v4/l{i}.json"))["words"]]
+            json.dump({"words": words}, open(f"scripts/captions/{name}.json", "w"), ensure_ascii=False)
+            ins, fl = [], []
+            for i, off in enumerate(V4_LINES):
+                ins += ["-i", f"audio/ad-8031/vo{i+1}.mp3"]
+                ms = int(off * 1000); fl.append(f"[{i}]adelay={ms}|{ms}[a{i}]")
+            total = sum(d for *_, d in cfg["shots"])
+            run(["ffmpeg", "-nostdin", "-v", "error", "-y", *ins, "-filter_complex",
+                 ";".join(fl) + ";" + "".join(f"[a{i}]" for i in range(len(V4_LINES))) +
+                 f"amix=inputs={len(V4_LINES)}:normalize=0,apad,atrim=0:{total}",
+                 "-c:a", "libmp3lame", "-b:a", "128k", "audio/ad-8031/vo_track.mp3"])
+            parts = []
+            for i, (src, st, d) in enumerate(cfg["shots"]):
+                p = os.path.join(tmp, f"{i:02d}.mp4"); shot(src, st, d, p); parts.append(p)
+            lst = os.path.join(tmp, "l.txt")
+            open(lst, "w").writelines(f"file '{p}'\n" for p in parts)
             aud = os.path.join(tmp, "a.m4a")
             v4_audio(total, aud)
             captions(name, cfg, 0.0, total, ass)
-            run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-i", src, "-i", aud,
-                 "-vf", f"{FILL},fps={FPS},ass={ass}:fontsdir={FONT_DIR}",
+            run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", lst, "-i", aud,
+                 "-vf", f"ass={ass}:fontsdir={FONT_DIR},fade=t=out:st={total-0.4:.2f}:d=0.4",
                  "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-preset", "slow", "-crf", "21",
                  "-pix_fmt", "yuv420p", "-c:a", "copy", "-movflags", "+faststart", "-t", f"{total:.2f}", out])
         else:
