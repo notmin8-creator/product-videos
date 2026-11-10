@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
-"""Add Baskio branding to finished ads: a small logo in the top-left corner the
-whole time, plus a 2-second end card (logo, store name, website).
+"""Add Baskio branding to finished ads: a small 'baskio' wordmark in the top-left corner the
+whole time, plus a green rounded 'www.baskiostore.com' badge over the last shot.
 
 Usage (repo root): python3 scripts/brand_ads.py ads/camera/v1-kids.mp4 [...]
-Writes ads/final/<name>.mp4. Logo: brand/baskio-logo.png (from baskiostore.com).
+Writes ads/final/<name>.mp4. Logo: brand/wordmark-ar.png and brand/wordmark-en.png (Baskio wordmarks).
 """
 import os, subprocess, sys, tempfile
 from PIL import Image, ImageDraw, ImageFont
 
 W, H, FPS = 1080, 1920, 30
 GREEN = (36, 70, 56)
-LIME = (129, 182, 82)
-SITE = "baskiostore.com"
-END = 2.0
+LIME = (36, 70, 56)   # website text in brand green on the white card
+SITE = "www.baskiostore.com"
+BADGE = 2.5   # seconds the website badge shows at the end
+BADGE_Y = {"v4-asmr": 470}   # per-ad badge height where the last shot needs it
 FONT = "fonts/thmanyah-sans-Black.otf"
-LOGO = "brand/baskio-logo.png"
+
 
 
 def rounded(img, r):
@@ -23,22 +24,28 @@ def rounded(img, r):
     out = img.convert("RGBA"); out.putalpha(m); return out
 
 
+def fit(path, w):
+    im = Image.open(path).convert("RGBA")
+    return im.resize((w, round(im.size[1] * w / im.size[0])), Image.LANCZOS)
+
+
 def make_assets(tmp):
-    logo = Image.open(LOGO).convert("RGB")
-    # corner logo: 96px rounded square, clear of Instagram's top bar (0-220px)
-    small = rounded(logo.resize((96, 96), Image.LANCZOS), 22)
-    small.save(os.path.join(tmp, "corner.png"))
-    # end card
-    card = Image.new("RGB", (W, H), GREEN)
-    big = logo.resize((520, 520), Image.LANCZOS)
-    card.paste(big, ((W - 520) // 2, 560))
-    d = ImageDraw.Draw(card)
-    f1 = ImageFont.truetype(FONT, 110)
-    f2 = ImageFont.truetype(FONT, 64)
-    for text, font, y, col in [("baskio", f1, 1120, (255, 255, 255)), (SITE, f2, 1270, LIME)]:
-        w = d.textlength(text, font=font)
-        d.text(((W - w) / 2, y), text, font=font, fill=col)
-    card.save(os.path.join(tmp, "card.png"))
+    # corner: green "baskio" wordmark on a white rounded pill, clear of Instagram's top bar
+    en = fit("brand/wordmark-en.png", 170)
+    pw, ph = en.size[0] + 44, en.size[1] + 30
+    pill = Image.new("RGBA", (pw, ph), (0, 0, 0, 0))
+    ImageDraw.Draw(pill).rounded_rectangle([0, 0, pw - 1, ph - 1], ph // 2, fill=(255, 255, 255, 235))
+    pill.alpha_composite(en, ((pw - en.size[0]) // 2, (ph - en.size[1]) // 2))
+    pill.save(os.path.join(tmp, "corner.png"))
+    # website badge for the last shot: white text on a brand-green rounded rectangle
+    f = ImageFont.truetype(FONT, 58)
+    tw = ImageDraw.Draw(Image.new("RGB", (1, 1))).textlength(SITE, font=f)
+    bw, bh = int(tw) + 96, 118
+    badge = Image.new("RGBA", (bw, bh), (0, 0, 0, 0))
+    d = ImageDraw.Draw(badge)
+    d.rounded_rectangle([0, 0, bw - 1, bh - 1], 30, fill=GREEN + (255,))
+    d.text(((bw - tw) / 2, 22), SITE, font=f, fill=(255, 255, 255))
+    badge.save(os.path.join(tmp, "badge.png"))
 
 
 def run(cmd):
@@ -51,19 +58,20 @@ def brand(src):
     out = f"ads/final/{name}.mp4"
     dur = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration",
                                          "-of", "csv=p=0", src]).decode())
+    st = max(dur - BADGE, 0)
     with tempfile.TemporaryDirectory() as tmp:
         make_assets(tmp)
-        fc = (f"[0:v][1:v]overlay=40:236:format=auto,fps={FPS},format=yuv420p,setsar=1[main];"
-              f"[2:v]scale={W}:{H},fps={FPS},format=yuv420p,setsar=1,fade=t=in:st=0:d=0.3[card];"
-              f"[main][card]concat=n=2:v=1:a=0[v];"
-              f"[0:a]apad=pad_dur={END},atrim=0:{dur + END:.3f},afade=t=out:st={dur + END - 0.6:.3f}:d=0.6[a]")
+        # badge sits in the open area under the captions, clear of the product and Instagram's UI
+        fc = (f"[0:v][1:v]overlay=40:236:format=auto[c];"
+              f"[2:v]format=rgba,fade=t=in:st={st:.2f}:d=0.3:alpha=1[b];"
+              f"[c][b]overlay=(W-w)/2:{BADGE_Y.get(name, 820)}:enable='gte(t,{st:.2f})':format=auto,format=yuv420p[v]")
         run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-i", src,
              "-i", os.path.join(tmp, "corner.png"),
-             "-loop", "1", "-t", str(END), "-i", os.path.join(tmp, "card.png"),
-             "-filter_complex", fc, "-map", "[v]", "-map", "[a]",
+             "-loop", "1", "-t", f"{dur:.3f}", "-i", os.path.join(tmp, "badge.png"),
+             "-filter_complex", fc, "-map", "[v]", "-map", "0:a",
              "-c:v", "libx264", "-preset", "slow", "-crf", "21", "-pix_fmt", "yuv420p",
-             "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", out])
-    print(f"{out}  {dur + END:.1f}s")
+             "-c:a", "copy", "-movflags", "+faststart", "-t", f"{dur:.3f}", out])
+    print(f"{out}  {dur:.1f}s")
 
 
 if __name__ == "__main__":
